@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>load test</title></head>
+<body>
+<div id="result">PENDING</div>
+<script type="module">
+import { FilesetResolver, HandLandmarker } from './vendor/vision_bundle.mjs';
+const result = document.getElementById('result');
+try {
+  const vision = await FilesetResolver.forVisionTasks('./vendor/');
+  result.textContent = 'vision OK';
+  const lm = await HandLandmarker.createFromOptions(vision, {
+    baseOptions: { modelAssetPath: './vendor/hand_landmarker.task', delegate: 'CPU' },
+    runningMode: 'VIDEO',
+    numHands: 2,
+  });
+  result.textContent = 'MODEL OK';
+  document.title = 'LOAD_OK';
+} catch (e) {
+  result.textContent = 'FAIL: ' + (e && e.message ? e.message : String(e));
+  document.title = 'LOAD_FAIL';
+}
+</script>
+</body>
+</html>
